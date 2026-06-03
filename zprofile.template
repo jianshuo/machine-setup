@@ -1,0 +1,7 @@
+# ~/.zprofile — 由 machine-setup 部署
+
+# Homebrew 环境
+eval "$(/opt/homebrew/bin/brew shellenv zsh)"
+
+# OrbStack 命令行工具集成
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :

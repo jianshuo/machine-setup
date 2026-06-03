@@ -1,0 +1,62 @@
+# ~/.zshrc — 由 machine-setup 部署。密钥不在此文件，放在 ~/.config/secrets.env
+# 安装脚本会把本文件拷成 ~/.zshrc
+
+# ===== nvm =====
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
+# ===== 代理（本机走 127.0.0.1:1087 / socks5 1086）=====
+# 新机器若没有本地代理，把下面这块注释掉，否则 curl/npm 会连不上。
+export HTTP_PROXY="http://127.0.0.1:1087"
+export HTTPS_PROXY="http://127.0.0.1:1087"
+export ALL_PROXY="socks5://127.0.0.1:1086"
+export http_proxy="$HTTP_PROXY"
+export https_proxy="$HTTPS_PROXY"
+export all_proxy="$ALL_PROXY"
+export NODE_USE_ENV_PROXY=1
+export NO_PROXY="localhost,127.0.0.1,::1"
+export no_proxy="$NO_PROXY"
+
+alias proxy-on='export HTTP_PROXY="http://127.0.0.1:1087"; export HTTPS_PROXY="http://127.0.0.1:1087"; export ALL_PROXY="socks5://127.0.0.1:1086"; export http_proxy="$HTTP_PROXY"; export https_proxy="$HTTPS_PROXY"; export all_proxy="$ALL_PROXY"; export NODE_USE_ENV_PROXY=1; echo "Proxy ON: http 1087 / socks5 1086"'
+alias proxy-off='unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy NODE_USE_ENV_PROXY; echo "Proxy OFF"'
+alias proxy-test='echo "=== Proxy Test ==="; \
+echo -n "Public IP: "; curl -s https://ipinfo.io/ip; echo; \
+echo -n "Country: "; curl -s https://ipinfo.io/country; echo; \
+echo -n "Region/City: "; curl -s https://ipinfo.io/region; echo ", "; curl -s https://ipinfo.io/city; echo; \
+echo "==================="'
+
+# ===== PATH =====
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+export PATH="$HOME/.claude/bin:$PATH"
+
+# ===== 密钥 / 环境变量（真实值在 secrets.env，不进 git）=====
+[ -f "$HOME/.config/secrets.env" ] && source "$HOME/.config/secrets.env"
+[ -f "$HOME/code/.env" ] && source "$HOME/code/.env"
+
+# 非密钥开关
+export X_AUTO_PUBLISH=true
+# 关掉 undici EnvHttpProxyAgent 实验性警告
+export NODE_OPTIONS="--disable-warning=UNDICI-EHPA"
+
+# ===== SSH 别名（Tailscale 内网）=====
+alias jianshuo="ssh jianshuo@100.95.224.55"
+alias tree="ssh jianshuo@100.96.169.53"
+alias mano="ssh jianshuo@100.88.255.76"
+
+# ===== 工作区别名 =====
+alias team="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/2026团队 && claude"
+alias buyback="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/股东/2026回购 && claude"
+alias money="cd /Users/jianshuo/Library/Mobile\ Documents/com~apple~CloudDocs/my/重要文档/财务报销 && claude"
+alias cathier="cd /Users/jianshuo/code/Cathier  && claude"
+alias marketing='gh workflow run marketing-daily.yml'
+
+# cclaude → 通过本地 ccglass 跑 claude（看发给模型的内容）
+alias cclaude='node ~/code/ccglass/bin/ccglass.js claude'
+
+# ccline — 在 shell 里打一句话直接得到回答
+[ -f /Users/jianshuo/.config/ccline/ccline.zsh ] && source /Users/jianshuo/.config/ccline/ccline.zsh
+
+# ===== Prompt: hostname + 当前文件夹名 =====
+PROMPT='%F{green}%m%f:%F{blue}%1~%f %# '
