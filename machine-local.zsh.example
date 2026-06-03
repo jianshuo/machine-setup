@@ -1,0 +1,14 @@
+# machine-local.zsh — 机器特定 / 个人信息，不进 git
+# 安装脚本会拷成 ~/.config/machine-local.zsh，把下面占位符换成真实值。
+# .zshrc 会自动 source 它。
+
+# ===== git 身份（setup.sh 的 dotfiles 步会读这两个变量配 git）=====
+export GIT_USER_NAME="你的名字"
+export GIT_USER_EMAIL="you@example.com"
+
+# ===== SSH 别名（按你的内网/Tailscale 填）=====
+# alias box1="ssh user@100.x.x.x"
+# alias box2="ssh user@100.x.x.x"
+
+# ===== 工作区快捷（cd 到常用目录并起 claude）=====
+# alias proj="cd ~/path/to/project && claude"

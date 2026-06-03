@@ -61,7 +61,6 @@ step_npm(){
   command -v npm >/dev/null 2>&1 || { warn "npm 不可用，先跑 runtimes"; return 0; }
   npm install -g \
     @earendil-works/pi-coding-agent \
-    @jackwener/wx-cli \
     @openai/codex \
     ccglass \
     corepack 2>/dev/null && ok "全局 npm 包完成" || warn "部分 npm 包失败"
@@ -79,16 +78,21 @@ step_dotfiles(){
     ok ".zshrc / .zprofile 已部署"
   fi
   mkdir -p "$HOME/.config"
-  if [ ! -f "$HOME/.config/secrets.env" ]; then
-    cp "$HERE/secrets.env.example" "$HOME/.config/secrets.env"
-    warn "已生成 ~/.config/secrets.env（占位符）——记得填真实密钥！"
+  # 占位符模板（已存在就不覆盖，免得抹掉填好的真实值）
+  seed(){ [ -f "$2" ] && { ok "$2 已存在，跳过"; return; }; cp "$1" "$2"; warn "已生成 $2（占位符）——记得填真实值！"; }
+  seed "$HERE/secrets.env.example"      "$HOME/.config/secrets.env"
+  seed "$HERE/machine-local.zsh.example" "$HOME/.config/machine-local.zsh"
+  mkdir -p "$HOME/code"
+  seed "$HERE/env.example"              "$HOME/code/.env"
+  # git 身份：从 machine-local.zsh 读 GIT_USER_NAME / GIT_USER_EMAIL
+  [ -f "$HOME/.config/machine-local.zsh" ] && source "$HOME/.config/machine-local.zsh"
+  if [ -n "${GIT_USER_NAME:-}" ] && [[ "$GIT_USER_NAME" != 你的名字 ]]; then
+    git config --global user.name  "$GIT_USER_NAME"
+    git config --global user.email "$GIT_USER_EMAIL"
+    ok "git 身份：$GIT_USER_NAME <$GIT_USER_EMAIL>"
   else
-    ok "~/.config/secrets.env 已存在，跳过"
+    warn "git 身份未设：填好 ~/.config/machine-local.zsh 里的 GIT_USER_* 后重跑 dotfiles"
   fi
-  # git 身份
-  git config --global user.name "Jianshuo Wang"
-  git config --global user.email "jianshuo@hotmail.com"
-  ok "git 全局身份已设置"
 }
 
 # --------------------------------------------------------------------------

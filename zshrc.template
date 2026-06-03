@@ -40,16 +40,10 @@ export X_AUTO_PUBLISH=true
 # 关掉 undici EnvHttpProxyAgent 实验性警告
 export NODE_OPTIONS="--disable-warning=UNDICI-EHPA"
 
-# ===== SSH 别名（Tailscale 内网）=====
-alias jianshuo="ssh jianshuo@100.95.224.55"
-alias tree="ssh jianshuo@100.96.169.53"
-alias mano="ssh jianshuo@100.88.255.76"
+# ===== 机器特定：SSH 别名 / 工作区路径 / git 身份（不进 git）=====
+# 真实值在 ~/.config/machine-local.zsh，从 machine-local.zsh.example 拷过去填。
+[ -f "$HOME/.config/machine-local.zsh" ] && source "$HOME/.config/machine-local.zsh"
 
-# ===== 工作区别名 =====
-alias team="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/2026团队 && claude"
-alias buyback="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/股东/2026回购 && claude"
-alias money="cd /Users/jianshuo/Library/Mobile\ Documents/com~apple~CloudDocs/my/重要文档/财务报销 && claude"
-alias cathier="cd /Users/jianshuo/code/Cathier  && claude"
 alias marketing='gh workflow run marketing-daily.yml'
 
 # cclaude → 通过本地 ccglass 跑 claude（看发给模型的内容）
