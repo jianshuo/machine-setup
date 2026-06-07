@@ -109,22 +109,22 @@ step_repos(){
   mkdir -p "$HOME/code"
   cd "$HOME/code" || return 1
   REPOS=(
-    https://github.com/jianshuo/machine-setup.git
-    https://github.com/jianshuo/jianshuo-memory.git
-    https://github.com/jianshuo/wechat-publish.git
-    https://github.com/jianshuo/wangjianshuo.com.git
-    https://github.com/jianshuo/home.wangjianshuo.com.git
-    https://github.com/jianshuo/Cathier.git
-    https://github.com/jianshuo/Cathier-certs.git
-    https://github.com/jianshuo/ccglass.git
-    https://github.com/jianshuo/cclight.git
-    https://github.com/jianshuo/ccline.git
-    https://github.com/jianshuo/bdpan-finder.git
-    https://github.com/jianshuo/polysync.git
-    https://github.com/jianshuo/huixianju.cn.git
-    https://github.com/jianshuo/inspirationlake.org.git
-    https://github.com/jianshuo/maggiacito.com.git
-    https://github.com/jianshuo/claude-skills.git
+    git@github.com:jianshuo/machine-setup.git
+    git@github.com:jianshuo/jianshuo-memory.git
+    git@github.com:jianshuo/wechat-publish.git
+    git@github.com:jianshuo/wangjianshuo.com.git
+    git@github.com:jianshuo/home.wangjianshuo.com.git
+    git@github.com:jianshuo/Cathier.git
+    git@github.com:jianshuo/Cathier-certs.git
+    git@github.com:jianshuo/ccglass.git
+    git@github.com:jianshuo/cclight.git
+    git@github.com:jianshuo/ccline.git
+    git@github.com:jianshuo/bdpan-finder.git
+    git@github.com:jianshuo/polysync.git
+    git@github.com:jianshuo/huixianju.cn.git
+    git@github.com:jianshuo/inspirationlake.org.git
+    git@github.com:jianshuo/maggiacito.com.git
+    git@github.com:jianshuo/claude-skills.git
   )
   for url in "${REPOS[@]}"; do
     name="${url##*/}"; name="${name%.git}"
