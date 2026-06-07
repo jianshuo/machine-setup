@@ -22,6 +22,7 @@ bash setup.sh runtimes   # 只装 nvm/node/uv
 bash setup.sh npm        # 只装全局 npm 包
 bash setup.sh dotfiles   # 只部署 .zshrc/.zprofile/git/secrets
 bash setup.sh claude     # 只装 Claude Code + plugins
+bash setup.sh repos      # 克隆所有 GitHub 仓库到 ~/code/
 bash setup.sh extras     # xurl / ccline 提示
 ```
 
@@ -34,6 +35,7 @@ bash setup.sh extras     # xurl / ccline 提示
 | 全局 npm | codex、wx-cli、pi-coding-agent、ccglass、corepack |
 | dotfiles | `.zshrc`、`.zprofile`、git 身份 |
 | Claude Code | CLI + 2 个 marketplace + 7 个用户级 plugin |
+| 代码仓库 | 16 个 GitHub repo 自动 clone 到 `~/code/` |
 | 独立二进制 | xurl（X CLI）、ccline（需手动拷）|
 
 ## 密钥 / 个人信息（重要）

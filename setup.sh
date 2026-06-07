@@ -103,6 +103,41 @@ step_claude(){
 }
 
 # --------------------------------------------------------------------------
+step_repos(){
+  run repos || return 0
+  c "克隆所有 GitHub 仓库到 ~/code/"
+  mkdir -p "$HOME/code"
+  cd "$HOME/code" || return 1
+  REPOS=(
+    https://github.com/jianshuo/machine-setup.git
+    https://github.com/jianshuo/jianshuo-memory.git
+    https://github.com/jianshuo/wechat-publish.git
+    https://github.com/jianshuo/wangjianshuo.com.git
+    https://github.com/jianshuo/home.wangjianshuo.com.git
+    https://github.com/jianshuo/Cathier.git
+    https://github.com/jianshuo/Cathier-certs.git
+    https://github.com/jianshuo/ccglass.git
+    https://github.com/jianshuo/cclight.git
+    https://github.com/jianshuo/ccline.git
+    https://github.com/jianshuo/bdpan-finder.git
+    https://github.com/jianshuo/polysync.git
+    https://github.com/jianshuo/huixianju.cn.git
+    https://github.com/jianshuo/inspirationlake.org.git
+    https://github.com/jianshuo/maggiacito.com.git
+    https://github.com/jianshuo/claude-skills.git
+  )
+  for url in "${REPOS[@]}"; do
+    name="${url##*/}"; name="${name%.git}"
+    if [ -d "$name/.git" ]; then
+      ok "$name 已存在，跳过"
+    else
+      ask "克隆 $name？" && git clone "$url" && ok "克隆完成：$name" || warn "跳过：$name"
+    fi
+  done
+  cd - >/dev/null
+}
+
+# --------------------------------------------------------------------------
 step_extras(){
   run extras || return 0
   c "额外的独立二进制：xurl / ccline"
@@ -124,6 +159,7 @@ step_runtimes
 step_npm
 step_dotfiles
 step_claude
+step_repos
 step_extras
 echo
 c "完成。接下来："
