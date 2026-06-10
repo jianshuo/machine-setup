@@ -47,9 +47,9 @@ export X_AUTO_PUBLISH=true
 [ -f "$HOME/.config/secrets.env" ] && . "$HOME/.config/secrets.env"
 [ -f "$HOME/code/.env" ] && . "$HOME/code/.env"
 
-# ===== 机器特定：SSH 别名 / 工作区路径 / git 身份（不进 git）=====
-# 从 machine-local.zsh.example 拷成 ~/.config/machine-local.zsh 填真实值。
-[ -f "$HOME/.config/machine-local.zsh" ] && . "$HOME/.config/machine-local.zsh"
+# ===== 机器特定：SSH 别名 / 工作区路径 / git 身份（在 .gitignore 里，不进 git）=====
+# 从 machine-local.zsh.example 拷成本目录的 machine-local.zsh 填真实值。
+[ -f "$HOME/code/machine-setup/machine-local.zsh" ] && . "$HOME/code/machine-setup/machine-local.zsh"
 
 # ===== 通用别名 =====
 alias cc="cd ~/code && claude agents"

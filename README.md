@@ -56,14 +56,14 @@ bash setup.sh extras     # xurl / ccline 提示
 | 本地文件 | 模板 | 放什么 |
 |---|---|---|
 | `~/.config/secrets.env` | `secrets.env.example` | `VOLC_APPID`、`MODEL_SPEECH_API_KEY`、`X_ACCESS_TOKEN` |
-| `~/.config/machine-local.zsh` | `machine-local.zsh.example` | git 真名邮箱、SSH 别名、工作区路径 |
+| `~/code/machine-setup/machine-local.zsh` | `machine-local.zsh.example` | git 真名邮箱、SSH 别名、工作区路径 |
 | `~/code/.env` | `env.example` | 20+ 个 API key（OpenAI/Claude/火山/微信/ASC/Cloudflare/Tailscale…）|
 
 `env.example` 里**列全了所有 key 名**（占位符 `CHANGE_ME`），照着把旧机器的真实值填进去即可，不会漏。
 
 ## 跑完之后手动几步
 
-1. 填三个本地文件：`~/.config/secrets.env`、`~/.config/machine-local.zsh`、`~/code/.env`（都有对应 `.example`）
+1. 填三个本地文件：`~/.config/secrets.env`、`~/code/machine-setup/machine-local.zsh`、`~/code/.env`（都有对应 `.example`）
 2. 新开终端或 `source ~/.zshrc`
 3. 代理：装好本地代理 app（监听 127.0.0.1:1087/1086）后重开终端即可——`.zshrc` 检测到 1087 在监听才会启用代理，没装也不影响直连
 4. **SSH key + `~/code/.env`**：脚本**最早一步**（`step_ssh`）会自动从 iCloud `重要文档/ssh-backup-*.zip` 恢复整个 `~/.ssh/` 和 `~/code/.env`（提示输密码，自动 chmod 600）。`.env` 抢在 dotfiles 的占位符 seed 之前就位，所以恢复的是真实值、占位符自动跳过。若当时 iCloud 还没同步下来 / 没登录 iCloud，会跳过——同步好后单独重跑 `bash setup.sh ssh` 即可，`repos` 步骤也有 SSH 连通性 preflight 兜底。备份的生成方式：把旧机器 `~/.ssh/`（zip 内路径 `.ssh/*`）和 `~/code/.env`（zip 内路径 `code/.env`，都相对 `$HOME`）打成同一个加密 zip 放进 iCloud `重要文档`（文件名 `ssh-backup-YYYY-MM-DD.zip`）

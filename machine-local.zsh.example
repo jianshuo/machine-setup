@@ -1,6 +1,6 @@
 # machine-local.zsh — 机器特定 / 个人信息，不进 git
-# 安装脚本会拷成 ~/.config/machine-local.zsh，把下面占位符换成真实值。
-# .zshrc 会自动 source 它。
+# 安装脚本会拷成 ~/code/machine-setup/machine-local.zsh（在 .gitignore 里），把下面占位符换成真实值。
+# shellrc 会自动 source 它。
 
 # ===== git 身份（setup.sh 的 dotfiles 步会读这两个变量配 git）=====
 export GIT_USER_NAME="你的名字"
