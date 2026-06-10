@@ -49,20 +49,8 @@ export X_AUTO_PUBLISH=true
 export GIT_USER_NAME="Jianshuo Wang"
 export GIT_USER_EMAIL="jianshuo@hotmail.com"
 
-# ===== SSH 别名（Tailscale 内网，IP 不可公网路由）=====
-alias jianshuo="ssh jianshuo@100.95.224.55"
-alias tree="ssh jianshuo@100.96.169.53"
-alias mano="ssh jianshuo@100.88.255.76"
-
-# ===== 工作区别名 =====
-alias team="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/2026团队 && claude"
-alias buyback="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/股东/2026回购 && claude"
-alias money="cd /Users/jianshuo/Library/Mobile\ Documents/com~apple~CloudDocs/my/重要文档/财务报销 && claude"
-alias cathier="cd /Users/jianshuo/code/Cathier && claude"
-
 # ===== 通用别名 =====
 alias cc="cd ~/code && claude agents"
-alias marketing='gh workflow run marketing-daily.yml'
 
 # cclaude → 通过本地 ccglass 跑 claude（看发给模型的内容）
 alias cclaude='node ~/code/ccglass/bin/ccglass.js claude'
