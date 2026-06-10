@@ -35,7 +35,7 @@ bash setup.sh extras     # xurl / ccline 提示
 | 全局 npm | codex、wx-cli、pi-coding-agent、ccglass、corepack |
 | dotfiles | `.zshrc`、`.zprofile`、git 身份 |
 | Claude Code | CLI + 2 个 marketplace + 7 个用户级 plugin |
-| 代码仓库 | 16 个 GitHub repo 自动 clone 到 `~/code/` |
+| 代码仓库 | 17 个 GitHub repo 自动 clone：通用 → `~/code/`，产品 → `~/code/products/`，网站 → `~/code/websites/` |
 | 独立二进制 | xurl（X CLI）、ccline（需手动拷）|
 
 ## 密钥 / 个人信息（重要）

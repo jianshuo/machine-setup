@@ -105,37 +105,32 @@ step_claude(){
 # --------------------------------------------------------------------------
 step_repos(){
   run repos || return 0
-  c "克隆所有 GitHub 仓库到 ~/code/"
-  mkdir -p "$HOME/code"
-  cd "$HOME/code" || return 1
-  REPOS=(
-    git@github.com:jianshuo/machine-setup.git
-    git@github.com:jianshuo/jianshuo-memory.git
-    git@github.com:jianshuo/wechat-publish.git
-    git@github.com:jianshuo/wangjianshuo.com.git
-    git@github.com:jianshuo/home.wangjianshuo.com.git
-    git@github.com:jianshuo/Cathier.git
-    git@github.com:jianshuo/Cathier-certs.git
-    git@github.com:jianshuo/ccglass.git
-    git@github.com:jianshuo/cclight.git
-    git@github.com:jianshuo/ccline.git
-    git@github.com:jianshuo/bdpan-finder.git
-    git@github.com:jianshuo/polysync.git
-    git@github.com:jianshuo/huixianju.cn.git
-    git@github.com:jianshuo/inspirationlake.org.git
-    git@github.com:jianshuo/maggiacito.com.git
-    git@github.com:jianshuo/claude-skills.git
-  )
-  for url in "${REPOS[@]}"; do
-    name="${url##*/}"; name="${name%.git}"
-    # also accept repos already cloned under ~/code/websites/
-    if [ -d "$name/.git" ] || [ -d "websites/$name/.git" ]; then
-      ok "$name 已存在，跳过"
+  c "克隆所有 GitHub 仓库（普通 → ~/code/，产品 → ~/code/products/，网站 → ~/code/websites/）"
+  # clone_into <父目录> <repo名>（本地目录名与 repo 同名）
+  # products/ 和 websites/ 只是普通文件夹，不是 git repo
+  clone_into(){
+    local parent="$1" repo="$2" rel
+    rel="${parent#"$HOME"/code}"; rel="${rel#/}"; rel="${rel:+$rel/}$repo"
+    mkdir -p "$parent"
+    if [ -d "$parent/$repo/.git" ]; then
+      ok "$rel 已存在，跳过"
     else
-      ask "克隆 $name?" && git clone "$url" && ok "克隆完成: $name" || warn "跳过: $name"
+      ask "克隆 $repo -> $rel?" && git clone "git@github.com:jianshuo/$repo.git" "$parent/$repo" \
+        && ok "克隆完成: $rel" || warn "跳过: $rel"
     fi
+  }
+  # 普通仓库 → ~/code/<name>
+  for repo in machine-setup jianshuo-memory wechat-publish polysync claude-skills; do
+    clone_into "$HOME/code" "$repo"
   done
-  cd - >/dev/null
+  # 产品仓库 → ~/code/products/<name>
+  for repo in ccline ccglass cclight bdpan-finder Cathier Cathier-certs; do
+    clone_into "$HOME/code/products" "$repo"
+  done
+  # 网站仓库 → ~/code/websites/<domain>
+  for repo in wangjianshuo.com home.wangjianshuo.com huixianju.cn inspirationlake.org maggiacito.com jianshuo.dev; do
+    clone_into "$HOME/code/websites" "$repo"
+  done
 }
 
 # --------------------------------------------------------------------------
