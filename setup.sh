@@ -105,17 +105,17 @@ step_claude(){
 # --------------------------------------------------------------------------
 step_repos(){
   run repos || return 0
-  c "克隆所有 GitHub 仓库（普通 → ~/code/，产品 → ~/code/products/，网站 → ~/code/websites/）"
-  # clone_into <父目录> <repo名>（本地目录名与 repo 同名）
-  # products/ 和 websites/ 只是普通文件夹，不是 git repo
+  c "克隆所有 GitHub 仓库（普通 → ~/code/，产品 → products/，网站 → websites/，外部 → external/）"
+  # clone_into <父目录> <repo名> [org]（本地目录名与 repo 同名，org 默认 jianshuo）
+  # products/ websites/ external/ 只是普通文件夹，不是 git repo
   clone_into(){
-    local parent="$1" repo="$2" rel
+    local parent="$1" repo="$2" org="${3:-jianshuo}" rel
     rel="${parent#"$HOME"/code}"; rel="${rel#/}"; rel="${rel:+$rel/}$repo"
     mkdir -p "$parent"
     if [ -d "$parent/$repo/.git" ]; then
       ok "$rel 已存在，跳过"
     else
-      ask "克隆 $repo -> $rel?" && git clone "git@github.com:jianshuo/$repo.git" "$parent/$repo" \
+      ask "克隆 $org/$repo -> $rel?" && git clone "git@github.com:$org/$repo.git" "$parent/$repo" \
         && ok "克隆完成: $rel" || warn "跳过: $rel"
     fi
   }
@@ -131,6 +131,10 @@ step_repos(){
   for repo in wangjianshuo.com home.wangjianshuo.com huixianju.cn inspirationlake.org maggiacito.com jianshuo.dev; do
     clone_into "$HOME/code/websites" "$repo"
   done
+  # 外部组织仓库 → ~/code/external/<name>
+  # 注意：baixing-cli 没有远端，只能从旧机器手动拷贝到 ~/code/external/baixing-cli
+  clone_into "$HOME/code/external" "haojing" "baixing"
+  clone_into "$HOME/code/external" "mira" "miravideo"
 }
 
 # --------------------------------------------------------------------------
