@@ -1,0 +1,59 @@
+# shellrc — 通用 shell 配置，zsh / bash 都能 source。由 ~/.zshrc 引用：
+#   [ -f ~/code/machine-setup/shellrc ] && source ~/code/machine-setup/shellrc
+# 规则：本文件只放 POSIX 兼容、可公开的内容（export / alias / PATH / source）。
+# 密钥在 ~/code/.env，机器特定的（SSH 别名/工作区路径）在 ~/.config/machine-local.zsh，
+# shell 专属的（prompt / 补全）留在 ~/.zshrc —— 这三样都不进本文件。
+
+# ===== PATH =====
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+export PATH="$HOME/.claude/bin:$PATH"
+export PATH="$HOME/.grok/bin:$PATH"
+
+# ===== nvm =====
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
+# ===== 代理（本机走 127.0.0.1:1087 / socks5 1086）=====
+# 只在本地代理真的在监听时才启用——新机器没装代理 app 时自动跳过，curl/npm 不会被带坏。
+if nc -z -w 1 127.0.0.1 1087 >/dev/null 2>&1; then
+  export HTTP_PROXY="http://127.0.0.1:1087"
+  export HTTPS_PROXY="http://127.0.0.1:1087"
+  export ALL_PROXY="socks5://127.0.0.1:1086"
+  export http_proxy="$HTTP_PROXY"
+  export https_proxy="$HTTPS_PROXY"
+  export all_proxy="$ALL_PROXY"
+  export NODE_USE_ENV_PROXY=1
+  export NO_PROXY="localhost,127.0.0.1,::1"
+  export no_proxy="$NO_PROXY"
+fi
+
+alias proxy-on='export HTTP_PROXY="http://127.0.0.1:1087"; export HTTPS_PROXY="http://127.0.0.1:1087"; export ALL_PROXY="socks5://127.0.0.1:1086"; export http_proxy="$HTTP_PROXY"; export https_proxy="$HTTPS_PROXY"; export all_proxy="$ALL_PROXY"; export NODE_USE_ENV_PROXY=1; echo "Proxy ON: http 1087 / socks5 1086"'
+alias proxy-off='unset HTTP_PROXY HTTPS_PROXY ALL_PROXY http_proxy https_proxy all_proxy NODE_USE_ENV_PROXY; echo "Proxy OFF"'
+alias proxy-test='echo "=== Proxy Test ==="; \
+echo -n "Public IP: "; curl -s https://ipinfo.io/ip; echo; \
+echo -n "Country: "; curl -s https://ipinfo.io/country; echo; \
+echo -n "Region/City: "; curl -s https://ipinfo.io/region; echo ", "; curl -s https://ipinfo.io/city; echo; \
+echo "==================="'
+
+# 关掉 undici EnvHttpProxyAgent 的实验性警告(代理走 NODE_USE_ENV_PROXY 时会喷)
+export NODE_OPTIONS="--disable-warning=UNDICI-EHPA"
+
+# ===== 非密钥开关 =====
+export X_AUTO_PUBLISH=true
+
+# ===== 密钥（真实值在 ~/code/.env，不进 git；secrets.env 为 setup.sh 兼容保留）=====
+[ -f "$HOME/.config/secrets.env" ] && . "$HOME/.config/secrets.env"
+[ -f "$HOME/code/.env" ] && . "$HOME/code/.env"
+
+# ===== 机器特定：SSH 别名 / 工作区路径 / git 身份（不进 git）=====
+# 从 machine-local.zsh.example 拷成 ~/.config/machine-local.zsh 填真实值。
+[ -f "$HOME/.config/machine-local.zsh" ] && . "$HOME/.config/machine-local.zsh"
+
+# ===== 通用别名 =====
+alias cc="cd ~/code && claude agents"
+alias marketing='gh workflow run marketing-daily.yml'
+
+# cclaude → 通过本地 ccglass 跑 claude（看发给模型的内容）
+alias cclaude='node ~/code/ccglass/bin/ccglass.js claude'
