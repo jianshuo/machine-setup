@@ -128,10 +128,11 @@ step_repos(){
   )
   for url in "${REPOS[@]}"; do
     name="${url##*/}"; name="${name%.git}"
-    if [ -d "$name/.git" ]; then
+    # also accept repos already cloned under ~/code/websites/
+    if [ -d "$name/.git" ] || [ -d "websites/$name/.git" ]; then
       ok "$name 已存在，跳过"
     else
-      ask "克隆 $name？" && git clone "$url" && ok "克隆完成：$name" || warn "跳过：$name"
+      ask "克隆 $name?" && git clone "$url" && ok "克隆完成: $name" || warn "跳过: $name"
     fi
   done
   cd - >/dev/null
