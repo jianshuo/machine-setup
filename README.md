@@ -7,6 +7,17 @@
 ## 一键安装
 
 ```bash
+curl -fsSL https://jianshuo.dev/setup/setup.sh | bash -s -- --yes
+```
+
+不依赖 github.com（有些网络环境访问不了）：setup.sh 会先从
+`https://jianshuo.dev/setup/machine-setup.tar.gz` 自举安装所需的文件
+（白名单清单，不含 git 历史）到 `~/code/machine-setup`，再继续跑全套。
+镜像在每次 commit 后自动同步（见下文「发布到 jianshuo.dev」）。
+
+能访问 GitHub 的话，传统方式也照常可用：
+
+```bash
 git clone https://github.com/jianshuo/machine-setup.git ~/code/machine-setup
 cd ~/code/machine-setup
 bash setup.sh            # 逐步确认
@@ -58,6 +69,28 @@ bash setup.sh extras     # xurl / ccline 提示
 4. `claude /login`（或用 cc-switch 切号）、`gh auth login`
 5. 自写 skill 不会自动来：把旧机器 `~/.claude/skills/` 整个目录、以及 `~/.claude/settings.json`（hooks / statusLine / permissions）拷过来
 6. `xurl`、`ccline` 不是 brew 包，按 `extras` 步骤的提示手动放二进制
+
+## 发布到 jianshuo.dev
+
+安装所需文件镜像在 `https://jianshuo.dev/setup/`（`setup.sh` + `machine-setup.tar.gz`），
+给访问不了 github.com 的环境用。同步是自动的：
+
+- `.git/hooks/post-commit` 在每次 commit 后调用 `publish-web.sh`；
+- `publish-web.sh` 把 HEAD 版本的白名单文件（见脚本里的 `FILES`，不含 git 历史）
+  打成 tar 包、拷出 `setup.sh`，提交到 `~/code/websites/jianshuo.dev` 并
+  `wrangler pages deploy`（幂等，HEAD 没变直接跳过）。新增 setup.sh 的文件依赖时，
+  记得把文件名加进 `FILES`。
+
+注意：网站里 `setup/setup.sh` 和 `setup/machine-setup.tar.gz` 是**生成物**，
+要改就改本 repo，别直接改网站副本。重新 clone 本 repo 后 hook 不会自带，重装一下：
+
+```bash
+cat > .git/hooks/post-commit <<'EOF'
+#!/usr/bin/env bash
+bash "$(git rev-parse --show-toplevel)/publish-web.sh" || echo "!! publish-web.sh 失败，手动跑一下"
+EOF
+chmod +x .git/hooks/post-commit
+```
 
 ## 重新生成快照
 

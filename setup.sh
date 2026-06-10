@@ -9,8 +9,22 @@
 # 幂等：每步都可重复跑。密钥不在脚本里，见 secrets.env.example。
 # ==========================================================================
 set -uo pipefail
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 NODE_VERSION="22"          # nvm 默认 node 大版本（旧机器为 v22.22.3）
+
+# --------------------------------------------------------------------------
+# 自举：本脚本被单独 curl 下来跑时（身边没有 Brewfile 等配套文件），
+# 先从 jianshuo.dev 镜像拉安装所需文件到 ~/code/machine-setup 再继续。
+# 镜像由 publish-web.sh 在每次 commit 后自动同步，见 README「发布到 jianshuo.dev」。
+#   curl -fsSL https://jianshuo.dev/setup/setup.sh | bash -s -- --yes
+if [ ! -f "$HERE/Brewfile" ]; then
+  MIRROR="https://jianshuo.dev/setup/machine-setup.tar.gz"
+  printf "\033[1;36m==> 单文件模式：从 %s 自举完整 repo 到 ~/code/machine-setup\033[0m\n" "$MIRROR"
+  mkdir -p "$HOME/code"
+  curl -fsSL "$MIRROR" | tar -xz -C "$HOME/code"
+  [ -f "$HOME/code/machine-setup/Brewfile" ] || { echo "!! 自举失败：镜像不完整"; exit 1; }
+  exec bash "$HOME/code/machine-setup/setup.sh" "$@"
+fi
 
 AUTO=0
 [ "${1:-}" = "--yes" ] && { AUTO=1; shift; }
