@@ -120,11 +120,11 @@ step_repos(){
     fi
   }
   # 普通仓库 → ~/code/<name>
-  for repo in machine-setup jianshuo-memory wechat-publish polysync claude-skills; do
+  for repo in machine-setup jianshuo-memory wechat-publish claude-skills; do
     clone_into "$HOME/code" "$repo"
   done
   # 产品仓库 → ~/code/products/<name>
-  for repo in ccline ccglass cclight bdpan-finder Cathier Cathier-certs; do
+  for repo in ccline ccglass cclight bdpan-finder Cathier Cathier-certs polysync; do
     clone_into "$HOME/code/products" "$repo"
   done
   # 网站仓库 → ~/code/websites/<domain>
