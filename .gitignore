@@ -1,6 +1,4 @@
 # 真实密钥 / 机器特定信息，永不进 git
-secrets.env
-machine-local.zsh
 .env
 *.local
 .DS_Store

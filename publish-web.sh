@@ -25,8 +25,6 @@ FILES=(
   Brewfile
   zshrc.template
   zprofile.template
-  machine-local.zsh.example
-  secrets.env.example
   env.example
   README.md
 )

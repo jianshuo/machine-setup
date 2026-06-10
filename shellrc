@@ -1,8 +1,7 @@
 # shellrc — 通用 shell 配置，zsh / bash 都能 source。由 ~/.zshrc 引用：
 #   [ -f ~/code/machine-setup/shellrc ] && source ~/code/machine-setup/shellrc
 # 规则：本文件只放 POSIX 兼容、可公开的内容（export / alias / PATH / source）。
-# 密钥在 ~/code/.env，机器特定的（SSH 别名/工作区路径）在 ~/.config/machine-local.zsh，
-# shell 专属的（prompt / 补全）留在 ~/.zshrc —— 这三样都不进本文件。
+# 密钥在 ~/code/.env（不进 git），shell 专属的（prompt / 补全）留在 ~/.zshrc。
 
 # ===== PATH =====
 export PATH="$HOME/.local/bin:$PATH"
@@ -43,13 +42,23 @@ export NODE_OPTIONS="--disable-warning=UNDICI-EHPA"
 # ===== 非密钥开关 =====
 export X_AUTO_PUBLISH=true
 
-# ===== 密钥（真实值在 ~/code/.env，不进 git；secrets.env 为 setup.sh 兼容保留）=====
-[ -f "$HOME/.config/secrets.env" ] && . "$HOME/.config/secrets.env"
+# ===== 密钥（真实值统一在 ~/code/.env，不进 git）=====
 [ -f "$HOME/code/.env" ] && . "$HOME/code/.env"
 
-# ===== 机器特定：SSH 别名 / 工作区路径 / git 身份（在 .gitignore 里，不进 git）=====
-# 从 machine-local.zsh.example 拷成本目录的 machine-local.zsh 填真实值。
-[ -f "$HOME/code/machine-setup/machine-local.zsh" ] && . "$HOME/code/machine-setup/machine-local.zsh"
+# ===== git 身份 =====
+export GIT_USER_NAME="Jianshuo Wang"
+export GIT_USER_EMAIL="jianshuo@hotmail.com"
+
+# ===== SSH 别名（Tailscale 内网，IP 不可公网路由）=====
+alias jianshuo="ssh jianshuo@100.95.224.55"
+alias tree="ssh jianshuo@100.96.169.53"
+alias mano="ssh jianshuo@100.88.255.76"
+
+# ===== 工作区别名 =====
+alias team="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/2026团队 && claude"
+alias buyback="cd /Users/jianshuo/Library/Mobile\ Documents/com\~apple\~CloudDocs/my/我的项目/百姓网/股东/2026回购 && claude"
+alias money="cd /Users/jianshuo/Library/Mobile\ Documents/com~apple~CloudDocs/my/重要文档/财务报销 && claude"
+alias cathier="cd /Users/jianshuo/code/Cathier && claude"
 
 # ===== 通用别名 =====
 alias cc="cd ~/code && claude agents"
