@@ -14,14 +14,16 @@ NODE_VERSION="22"          # nvm 默认 node 大版本（旧机器为 v22.22.3�
 
 # --------------------------------------------------------------------------
 # 自举：本脚本被单独 curl 下来跑时（身边没有 Brewfile 等配套文件），
-# 先从 jianshuo.dev 镜像拉安装所需文件到 ~/code/machine-setup 再继续。
-# 镜像由 publish-web.sh 在每次 commit 后自动同步，见 README「发布到 jianshuo.dev」。
+# 先从 jianshuo.dev 拉安装所需文件到 ~/code/machine-setup 再继续。
+# jianshuo.dev/setup/* 是 Pages Function 实时反代 GitHub main 分支，push 即生效，
+# 无需任何同步（见 README「发布到 jianshuo.dev」）。GitHub tar 包顶层目录名是
+# machine-setup-main/，用 --strip-components=1 摊平到目标目录。
 #   curl -fsSL https://jianshuo.dev/setup/setup.sh | bash -s -- --yes
 if [ ! -f "$HERE/Brewfile" ]; then
   MIRROR="https://jianshuo.dev/setup/machine-setup.tar.gz"
   printf "\033[1;36m==> 单文件模式：从 %s 自举安装文件到 ~/code/machine-setup\033[0m\n" "$MIRROR"
-  mkdir -p "$HOME/code"
-  curl -fsSL "$MIRROR" | tar -xz -C "$HOME/code"
+  mkdir -p "$HOME/code/machine-setup"
+  curl -fsSL "$MIRROR" | tar -xz --strip-components=1 -C "$HOME/code/machine-setup"
   [ -f "$HOME/code/machine-setup/Brewfile" ] || { echo "!! 自举失败：镜像不完整"; exit 1; }
   # curl | bash 时 stdin 是管道：重新接回终端，不带 --yes 的交互确认才能用
   if [ -e /dev/tty ]; then

@@ -12,8 +12,8 @@ curl -fsSL https://jianshuo.dev/setup/setup.sh | bash -s -- --yes
 
 不依赖 github.com（有些网络环境访问不了）：setup.sh 会先从
 `https://jianshuo.dev/setup/machine-setup.tar.gz` 自举安装所需的文件
-（白名单清单，不含 git 历史）到 `~/code/machine-setup`，再继续跑全套。
-镜像在每次 commit 后自动同步（见下文「发布到 jianshuo.dev」）。
+（仓库快照，不含 git 历史）到 `~/code/machine-setup`，再继续跑全套。
+该地址是实时反代 GitHub 的，push 即生效（见下文「发布到 jianshuo.dev」）。
 
 能访问 GitHub 的话，传统方式也照常可用：
 
@@ -73,25 +73,14 @@ bash setup.sh extras     # xurl / ccline 提示
 
 ## 发布到 jianshuo.dev
 
-安装所需文件镜像在 `https://jianshuo.dev/setup/`（`setup.sh` + `machine-setup.tar.gz`），
-给访问不了 github.com 的环境用。同步是自动的：
+`https://jianshuo.dev/setup/setup.sh` 和 `…/machine-setup.tar.gz` **不是镜像副本，
+而是实时反代**：jianshuo.dev（Cloudflare Pages）上的两个 Pages Function 在请求时
+从 GitHub 代取本仓库 main 分支的对应内容（边缘缓存 5 分钟）。客户端只需要能连
+jianshuo.dev，GitHub 由 Cloudflare 边缘访问，所以照样适用于访问不了 github.com 的环境。
 
-- `.git/hooks/post-commit` 在每次 commit 后调用 `publish-web.sh`；
-- `publish-web.sh` 把 HEAD 版本的白名单文件（见脚本里的 `FILES`，不含 git 历史）
-  打成 tar 包、拷出 `setup.sh`，提交到 `~/code/websites/jianshuo.dev` 并
-  `wrangler pages deploy`（幂等，HEAD 没变直接跳过）。新增 setup.sh 的文件依赖时，
-  记得把文件名加进 `FILES`。
-
-注意：网站里 `setup/setup.sh` 和 `setup/machine-setup.tar.gz` 是**生成物**，
-要改就改本 repo，别直接改网站副本。重新 clone 本 repo 后 hook 不会自带，重装一下：
-
-```bash
-cat > .git/hooks/post-commit <<'EOF'
-#!/usr/bin/env bash
-bash "$(git rev-parse --show-toplevel)/publish-web.sh" || echo "!! publish-web.sh 失败，手动跑一下"
-EOF
-chmod +x .git/hooks/post-commit
-```
+发布流程就是 `git push`——没有同步脚本、没有 hook、没有白名单。
+反代实现在网站仓库 `websites/jianshuo.dev/functions/setup/` 下的
+`setup.sh.js` 和 `machine-setup.tar.gz.js`。
 
 ## 重新生成快照
 
