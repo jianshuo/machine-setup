@@ -166,7 +166,7 @@ step_claude(){
 # --------------------------------------------------------------------------
 step_repos(){
   run repos || return 0
-  c "克隆所有 GitHub 仓库（普通 → ~/code/，产品 → products/，网站 → websites/，外部 → external/）"
+  c "克隆所有 GitHub 仓库（全部扁平落到 ~/code/<name>）"
   # 前置检查：全新机器没有 SSH key，git@github.com 一个仓库都拉不下来
   if ! ssh -o BatchMode=yes -o ConnectTimeout=8 -o StrictHostKeyChecking=accept-new -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
     warn "SSH 连不上 GitHub，跳过整个克隆步骤。配好 key 后单独重跑：bash setup.sh repos"
@@ -180,7 +180,7 @@ step_repos(){
     return 0
   fi
   # clone_into <父目录> <repo名> [org]（本地目录名与 repo 同名，org 默认 jianshuo）
-  # products/ websites/ external/ 只是普通文件夹，不是 git repo
+  # 所有仓库都直接 clone 到 ~/code/ 根下（扁平结构，不再分 products/websites/external 子目录）
   clone_into(){
     local parent="$1" repo="$2" org="${3:-jianshuo}" rel
     rel="${parent#"$HOME"/code}"; rel="${rel#/}"; rel="${rel:+$rel/}$repo"
@@ -192,22 +192,16 @@ step_repos(){
         && ok "克隆完成: $rel" || warn "跳过: $rel"
     fi
   }
-  # 普通仓库 → ~/code/<name>
-  for repo in machine-setup jianshuo-memory wechat-publish claude-skills; do
+  # 自有仓库（org=jianshuo）→ ~/code/<name>
+  for repo in machine-setup jianshuo-memory wechat-publish claude-skills \
+              ccline ccglass cclight bdpan-finder Cathier Cathier-certs polysync \
+              wangjianshuo.com home.wangjianshuo.com huixianju.cn inspirationlake.org maggiacito.com jianshuo.dev; do
     clone_into "$HOME/code" "$repo"
   done
-  # 产品仓库 → ~/code/products/<name>
-  for repo in ccline ccglass cclight bdpan-finder Cathier Cathier-certs polysync; do
-    clone_into "$HOME/code/products" "$repo"
-  done
-  # 网站仓库 → ~/code/websites/<domain>
-  for repo in wangjianshuo.com home.wangjianshuo.com huixianju.cn inspirationlake.org maggiacito.com jianshuo.dev; do
-    clone_into "$HOME/code/websites" "$repo"
-  done
-  # 外部组织仓库 → ~/code/external/<name>
-  # 注意：baixing-cli 没有远端，只能从旧机器手动拷贝到 ~/code/external/baixing-cli
-  clone_into "$HOME/code/external" "haojing" "baixing"
-  clone_into "$HOME/code/external" "mira" "miravideo"
+  # 外部组织仓库（org 不是 jianshuo）→ 同样落到 ~/code/<name>
+  # 注意：baixing-cli 没有远端，只能从旧机器手动拷贝到 ~/code/baixing-cli
+  clone_into "$HOME/code" "haojing" "baixing"
+  clone_into "$HOME/code" "mira" "miravideo"
 }
 
 # --------------------------------------------------------------------------
