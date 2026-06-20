@@ -4,7 +4,9 @@
 #
 #   bash setup.sh           # 全套，逐步确认
 #   bash setup.sh --yes     # 全套，不再逐步确认
+#   bash setup.sh -v        # 详细输出：开 set -x 命令追踪，不静默 brew/npm 等
 #   bash setup.sh brew      # 只跑某一步：brew / runtimes / npm / dotfiles / claude / extras
+#   （以上参数可任意组合，如 bash setup.sh --yes -v repos）
 #
 # 幂等：每步都可重复跑。密钥不在脚本里，见 env.example。
 # ==========================================================================
@@ -34,14 +36,30 @@ if [ ! -f "$HERE/Brewfile" ]; then
 fi
 
 AUTO=0
-[ "${1:-}" = "--yes" ] && { AUTO=1; shift; }
-ONLY="${1:-all}"
+VERBOSE=0
+ONLY=all
+# 参数任意顺序：--yes / --verbose|-v 为开关，其余视为「只跑某一步」的步骤名
+for arg in "$@"; do
+  case "$arg" in
+    --yes|-y)        AUTO=1 ;;
+    --verbose|-v)    VERBOSE=1 ;;
+    *)               ONLY="$arg" ;;
+  esac
+done
 
 c(){ printf "\033[1;36m==> %s\033[0m\n" "$*"; }
 ok(){ printf "\033[1;32m  ✓ %s\033[0m\n" "$*"; }
 warn(){ printf "\033[1;33m  ! %s\033[0m\n" "$*"; }
 ask(){ [ "$AUTO" = 1 ] && return 0; read -r -p "  $1 [Y/n] " a; [ -z "$a" ] || [[ "$a" =~ ^[Yy] ]]; }
 run(){ [ "$ONLY" = all ] || [ "$ONLY" = "$1" ]; }
+# 详细模式：开 xtrace 命令追踪；vq 替换原来静默用的 2>/dev/null（详细时放开 stderr）
+if [ "$VERBOSE" = 1 ]; then
+  export PS4='+ \033[2m[$(basename "${BASH_SOURCE:-setup.sh}"):${LINENO}]\033[0m '
+  set -x
+  vq(){ "$@"; }
+else
+  vq(){ "$@" 2>/dev/null; }
+fi
 
 # --------------------------------------------------------------------------
 # 最早执行：从 iCloud 备份恢复 ~/.ssh 和 ~/code/.env（密钥不进 git/镜像，手动输密码解密）。
@@ -95,7 +113,8 @@ step_brew(){
     return 0
   fi
   if ask "用 Brewfile 安装所有包（formulae/casks/uv/npm/vscode）？"; then
-    brew bundle --file="$HERE/Brewfile" || warn "部分包失败，可重跑"
+    BREW_V=""; [ "$VERBOSE" = 1 ] && BREW_V="--verbose"
+    brew bundle $BREW_V --file="$HERE/Brewfile" || warn "部分包失败，可重跑"
     ok "brew bundle 完成"
   fi
 }
@@ -122,11 +141,11 @@ step_npm(){
   run npm || return 0
   c "全局 npm 包（Brewfile 里的 npm 行已装一遍，这里兜底）"
   command -v npm >/dev/null 2>&1 || { warn "npm 不可用，先跑 runtimes"; return 0; }
-  npm install -g \
+  vq npm install -g \
     @earendil-works/pi-coding-agent \
     @openai/codex \
     ccglass \
-    corepack 2>/dev/null && ok "全局 npm 包完成" || warn "部分 npm 包失败"
+    corepack && ok "全局 npm 包完成" || warn "部分 npm 包失败"
 }
 
 # --------------------------------------------------------------------------
@@ -220,7 +239,8 @@ step_extras(){
 }
 
 # --------------------------------------------------------------------------
-echo "================ machine-setup ($ONLY) ================"
+VLABEL=""; [ "$VERBOSE" = 1 ] && VLABEL=", verbose"
+echo "================ machine-setup ($ONLY$VLABEL) ================"
 step_ssh
 step_brew
 step_runtimes

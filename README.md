@@ -23,6 +23,7 @@ cd ~/code/machine-setup
 bash setup.sh            # 逐步确认
 # 或
 bash setup.sh --yes      # 全自动
+bash setup.sh -v         # 详细输出（set -x 命令追踪 + 不静默 brew/npm；可与上面任意组合）
 ```
 
 也可只跑某一步：
