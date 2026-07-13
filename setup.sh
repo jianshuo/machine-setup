@@ -5,7 +5,7 @@
 #   bash setup.sh           # 全套，逐步确认
 #   bash setup.sh --yes     # 全套，不再逐步确认
 #   bash setup.sh -v        # 详细输出：开 set -x 命令追踪，不静默 brew/npm 等
-#   bash setup.sh brew      # 只跑某一步：brew / runtimes / npm / dotfiles / claude / extras
+#   bash setup.sh brew      # 只跑某一步：brew / runtimes / npm / bin / dotfiles / claude / extras
 #   （以上参数可任意组合，如 bash setup.sh --yes -v repos）
 #
 # 幂等：每步都可重复跑。密钥不在脚本里，见 env.example。
@@ -149,6 +149,21 @@ step_npm(){
 }
 
 # --------------------------------------------------------------------------
+step_bin(){
+  run bin || return 0
+  c "自带命令行工具（bin/ → /opt/homebrew/bin 软链）"
+  local dest="/opt/homebrew/bin"
+  [ -d "$dest" ] || { warn "$dest 不存在，先跑 brew 步骤装 Homebrew"; return 0; }
+  local f name
+  for f in "$HERE"/bin/*; do
+    [ -f "$f" ] || continue
+    name="$(basename "$f")"
+    chmod +x "$f"
+    ln -sf "$f" "$dest/$name" && ok "$name → $dest/$name"
+  done
+}
+
+# --------------------------------------------------------------------------
 backup(){ [ -e "$1" ] && cp "$1" "$1.bak.$(date +%s)" && warn "已备份 $1 → $1.bak.*"; }
 
 step_dotfiles(){
@@ -245,6 +260,7 @@ step_ssh
 step_brew
 step_runtimes
 step_npm
+step_bin
 step_dotfiles
 step_claude
 step_repos

@@ -32,6 +32,7 @@ bash setup.sh -v         # 详细输出（set -x 命令追踪 + 不静默 brew/n
 bash setup.sh brew       # 只装 Homebrew 包
 bash setup.sh runtimes   # 只装 nvm/node/uv
 bash setup.sh npm        # 只装全局 npm 包
+bash setup.sh bin        # 只装自带命令行工具（bin/ 软链到 /opt/homebrew/bin，如 netgrade）
 bash setup.sh dotfiles   # 只部署 .zshrc/.zprofile/git/secrets
 bash setup.sh claude     # 只装 Claude Code + plugins
 bash setup.sh repos      # 克隆所有 GitHub 仓库到 ~/code/
@@ -48,6 +49,7 @@ bash setup.sh extras     # xurl / ccline 提示
 | dotfiles | `.zshrc`、`.zprofile`、git 身份 |
 | Claude Code | CLI + 2 个 marketplace + 7 个用户级 plugin |
 | 代码仓库 | 全部 GitHub repo 自动 clone，扁平落到 `~/code/<name>`（不再分 products/websites/external 子目录）|
+| 自带工具 | `bin/` 下的自写脚本软链到 `/opt/homebrew/bin`：netgrade（网络体检评级，`netgrade` / `netgrade --fast`）|
 | 独立二进制 | xurl（X CLI）、ccline（需手动拷）|
 
 ## 密钥 / 个人信息（重要）
