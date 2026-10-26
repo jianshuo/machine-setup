@@ -92,3 +92,7 @@ jianshuo.dev，GitHub 由 Cloudflare 边缘访问，所以照样适用于访问�
 ```bash
 brew bundle dump --file=~/code/machine-setup/Brewfile --force --describe
 ```
+
+## 代理
+
+见 [PROXY.md](PROXY.md)：Just My Socks（VLESS/Reality）+ Clash Verge 的用法、终端代理开关、排查清单。
