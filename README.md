@@ -95,4 +95,4 @@ brew bundle dump --file=~/code/machine-setup/Brewfile --force --describe
 
 ## 代理
 
-见 [PROXY.md](PROXY.md)：Just My Socks（VLESS/Reality）+ Clash Verge 的用法、终端代理开关、排查清单。
+见 [PROXY.md](PROXY.md)：Jamjams + Just My Socks（VLESS/Reality），终端代理与排查；完整教程在 jianshuo.dev/setup/。
