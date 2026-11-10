@@ -92,3 +92,7 @@ jianshuo.dev，GitHub 由 Cloudflare 边缘访问，所以照样适用于访问�
 ```bash
 brew bundle dump --file=~/code/machine-setup/Brewfile --force --describe
 ```
+
+## 每晚加密备份（mac-backup）
+
+`~/.claude`、`.env`、`~/.ssh`、`.p8` 等只在本机的东西，每天 03:30 用 restic 加密增量备份到 R2 桶 `mac-backup`。安装、日常查看、丢机恢复都在 [backup/README.md](backup/README.md)。

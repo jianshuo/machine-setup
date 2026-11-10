@@ -1,0 +1,13 @@
+# restic 排除规则（mac-backup.sh 用）
+# 后台任务的临时目录：几个 G，任务结束即无用
+/Users/*/.claude/jobs
+# 可再生的缓存 / 遥测 / 日志
+/Users/*/.claude/cache
+/Users/*/.claude/telemetry
+/Users/*/.claude/shell-snapshots
+/Users/*/.claude/statsig
+/Users/*/.claude/debug
+/Users/*/.claude/plugins/cache
+/Users/*/.claude/*.log
+/Users/*/.claude/**/node_modules
+.DS_Store
