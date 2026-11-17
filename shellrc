@@ -14,6 +14,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
+
 # source $HOME/code/machine-setup/proxy.sh
 
 # ===== 非密钥开关 =====
@@ -33,4 +34,4 @@ alias cc="cd ~/code && claude agents"
 alias cclaude='node ~/code/ccglass/bin/ccglass.js claude'
 
 alias ie="open -a Safari"
-
+alias engage="wrangler d1 execute voicedrop-reco --remote --command 'SELECT *  FROM engagement'"
